@@ -1,0 +1,21 @@
+{
+    "name": "dench/yii2-modal",
+    "description": "Modal widget for Yii2",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","modal"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Dench",
+            "email": "dench@i.ua"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "dench\\modal\\": ""
+        }
+    }
+}
