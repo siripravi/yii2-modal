@@ -6,7 +6,7 @@
  * Time: 16:00
  */
 
-namespace dench\Modal;
+namespace dench\modal;
 
 use yii\base\Widget;
 
