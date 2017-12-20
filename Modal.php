@@ -33,6 +33,7 @@ function renderData(obj, data, sel) {
     }
 }
 function openModal(action) {
+    $('.g-recaptcha').remove();
     $.getJSON(action, function(data){
         var obj = $('.{$this->class}');
         modalLoad(obj, data);
