@@ -27,7 +27,7 @@ Usage
 
 Once the extension is installed, simply use it in your code by  :
 
-```php
+```html
 <button data-modal="/site/modal-test">Open Modal</button>
 
 <?= \dench\modal\Modal::widget(); ?>
