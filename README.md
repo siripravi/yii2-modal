@@ -30,6 +30,8 @@ Once the extension is installed, simply use it in your code by  :
 ```html
 <button data-modal="/site/modal-test">Open Modal</button>
 
+<button onclick="openModal('/site/modal-test');">Open Modal</button>
+
 <?= \dench\modal\Modal::widget(); ?>
 ```
 ```php

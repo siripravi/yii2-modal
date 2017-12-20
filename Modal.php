@@ -9,6 +9,7 @@
 namespace dench\modal;
 
 use yii\base\Widget;
+use yii\web\View;
 
 class Modal extends Widget
 {
@@ -31,14 +32,20 @@ function renderData(obj, data, sel) {
         obj.find(sel).hide();
     }
 }
-$(document).on('click', '*[data-modal]', function(e){
-    e.preventDefault();
-    var but = $(this);
-    $.getJSON(but.attr('data-modal'), function(data){
+function openModal(action) {
+    $.getJSON(action, function(data){
         var obj = $('.{$this->class}');
         modalLoad(obj, data);
         obj.modal('show');
     });
+}
+JS;
+        $view->registerJs($js, View::POS_END);
+
+$js = <<<JS
+$(document).on('click', '*[data-modal]', function(e){
+    e.preventDefault();
+    openModal($(this).attr('data-modal'));
 });
 $(document).on('click', '.{$this->class} button[type="submit"]', function(){
     $('.{$this->class} form').submit();
