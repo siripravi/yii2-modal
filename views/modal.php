@@ -5,17 +5,27 @@
  * Date: 19.12.17
  * Time: 15:05
  *
- * @var $class string
+ * @var $options array
+ * @var $titleTag string
+ * @var $titleOptions string
+ * @var $size string
+ * @var $close boolean
+ * @var $center boolean
  */
+
+use yii\helpers\Html;
+
 ?>
-<div class="modal <?= $class ?> fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal <?= $options['class'] ?> fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog<?= $center ? ' modal-dialog-centered' : '' ?><?= $size ? ' ' . $size : '' ?>" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"></h5>
+                <?= Html::tag($titleTag, '', $titleOptions) ?>
+                <?php if ($close) : ?>
                 <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                <?php endif; ?>
             </div>
             <div class="modal-body"></div>
             <div class="modal-footer"></div>
