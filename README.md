@@ -28,9 +28,11 @@ Usage
 Once the extension is installed, simply use it in your code by  :
 
 ```html
-<button data-modal="/site/modal-test">Open Modal</button>
+<button data-modal="/site/modal-test" data-modal-size="modal-sm">Open Modal</button>
 
-<button onclick="openModal('/site/modal-test');">Open Modal</button>
+<button onclick="openModal('/site/modal-test', { size: 'modal-lg' });">Open Modal</button>
+
+<button onclick="openModal(null, { title: 'Title', body: 'Body' });">Open Modal</button>
 
 <?= \dench\modal\Modal::widget(); ?>
 ```

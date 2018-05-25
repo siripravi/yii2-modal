@@ -38,6 +38,7 @@ function modalLoad(obj, data) {
     renderData(obj, data.title, '.modal-title');
     renderData(obj, data.body, '.modal-body');
     renderData(obj, data.footer, '.modal-footer');
+    obj.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm').addClass(data.size);
 }
 function renderData(obj, data, sel) {
     if (data) {
@@ -46,13 +47,20 @@ function renderData(obj, data, sel) {
         obj.find(sel).hide();
     }
 }
-function openModal(action) {
+function openModal(action = null, config = {}) {
     $('.g-recaptcha').remove();
-    $.getJSON(action, function(data){
+    if (action === null) {
         var obj = $('.{$this->modalClass}');
-        modalLoad(obj, data);
+        modalLoad(obj, config);
         obj.modal('show');
-    });
+    } else {
+        $.getJSON(action, function(data){
+            var obj = $('.{$this->modalClass}');
+            config = $.extend(data, config);
+            modalLoad(obj, data);
+            obj.modal('show');
+        });
+    }
 }
 JS;
         $view->registerJs($js, View::POS_END);
@@ -60,7 +68,14 @@ JS;
 $js = <<<JS
 $(document).on('click', '*[data-modal]', function(e){
     e.preventDefault();
-    openModal($(this).attr('data-modal'));
+    var config = {
+        size: $(this).attr('data-modal-size'),
+        title: $(this).attr('data-modal-title'),
+        body: $(this).attr('data-modal-body'),
+        footer: $(this).attr('data-modal-footer')
+    };
+    var action = $(this).attr('data-modal-action');
+    openModal($(this).attr('data-modal'), config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
     $('.{$this->modalClass} form').submit();
