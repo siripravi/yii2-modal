@@ -78,7 +78,7 @@ $(document).on('click', '*[data-modal]', function(e){
     openModal($(this).attr('data-modal'), config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
-    $('.{$this->modalClass} form').submit();
+    $('.{$this->modalClass} form').trigger('beforeSubmit');
 });
 $(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
     var form = $(this);
