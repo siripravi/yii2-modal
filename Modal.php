@@ -39,6 +39,7 @@ function modalLoad(obj, data) {
     renderData(obj, data.body, '.modal-body');
     renderData(obj, data.footer, '.modal-footer');
     obj.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm').addClass(data.size);
+    obj.addClass(data.class);
 }
 function renderData(obj, data, sel) {
     if (data) {
@@ -72,9 +73,9 @@ $(document).on('click', '*[data-modal]', function(e){
         size: $(this).attr('data-modal-size'),
         title: $(this).attr('data-modal-title'),
         body: $(this).attr('data-modal-body'),
-        footer: $(this).attr('data-modal-footer')
+        footer: $(this).attr('data-modal-footer'),
+        class: $(this).attr('data-modal-class')
     };
-    var action = $(this).attr('data-modal-action');
     openModal($(this).attr('data-modal'), config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
