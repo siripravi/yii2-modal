@@ -29,6 +29,10 @@ class Modal extends Widget
 
     public $center = false;
 
+    public $backdrop = 'true'; // 'true'|'false'|'"static"'
+
+    public $keyboard = 'true';
+
     public function run()
     {
         $view = $this->getView();
@@ -53,20 +57,40 @@ function openModal(action = null, config = {}) {
     if (action === null) {
         var obj = $('.{$this->modalClass}');
         modalLoad(obj, config);
-        obj.modal('show');
+        if (typeof config.backdrop !== 'undefined') {
+            config.backdrop = {$this->backdrop};
+        }
+        if (typeof config.keyboard !== 'undefined') {
+            config.keyboard = {$this->keyboard};
+        }
+        obj.modal({
+            show: true,
+            backdrop: config.backdrop,
+            keyboard: config.keyboard
+        });
     } else {
         $.getJSON(action, function(data){
             var obj = $('.{$this->modalClass}');
-            config = $.extend(data, config);
+            data = $.extend(data, config);
             modalLoad(obj, data);
-            obj.modal('show');
+            if (!data.backdrop) {
+                data.backdrop = {$this->backdrop};
+            }
+            if (!data.keyboard) {
+                data.keyboard = {$this->keyboard};
+            }
+            obj.modal({
+                show: true,
+                backdrop: data.backdrop,
+                keyboard: data.keyboard
+            });
         });
     }
 }
 JS;
         $view->registerJs($js, View::POS_END);
 
-$js = <<<JS
+        $js = <<<JS
 $(document).on('click', '*[data-modal]', function(e){
     e.preventDefault();
     var config = {
@@ -74,7 +98,9 @@ $(document).on('click', '*[data-modal]', function(e){
         title: $(this).attr('data-modal-title'),
         body: $(this).attr('data-modal-body'),
         footer: $(this).attr('data-modal-footer'),
-        class: $(this).attr('data-modal-class')
+        class: $(this).attr('data-modal-class'),
+        backdrop: $(this).attr('data-modal-backdrop'),
+        keyboard: $(this).attr('data-modal-keyboard')
     };
     openModal($(this).attr('data-modal'), config);
 });
