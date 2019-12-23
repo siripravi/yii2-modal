@@ -106,6 +106,7 @@ $(document).on('click', '*[data-modal]', function(e){
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
     $('.{$this->modalClass} form').trigger('beforeSubmit');
+    return false;
 });
 $(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
     var form = $(this);
