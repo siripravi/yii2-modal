@@ -9,7 +9,6 @@
 namespace dench\modal;
 
 use yii\base\Widget;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -35,15 +34,29 @@ class Modal extends Widget
 
     public function run()
     {
-        $view = $this->getView();
+        /* @var $view View */
+        $view = $this->view;
 
         $js = <<<JS
 function modalLoad(obj, data) {
     renderData(obj, data.title, '.modal-title');
     renderData(obj, data.body, '.modal-body');
     renderData(obj, data.footer, '.modal-footer');
-    obj.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm').addClass(data.size);
-    obj.addClass(data.class);
+    obj.find('.modal-dialog').attr('class', 'modal-dialog').addClass(data.dialog);
+    obj.addClass(data.class).attr('data-modal-action', data.action);
+    if (data.title) {
+        obj.find('.modal-header').show();
+    } else {
+        obj.find('.modal-header').hide();
+    }
+    if (data.autoclose) {
+        setTimeout(function(){
+            $('.{$this->modalClass}').modal('hide');
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            }
+        }, data.autoclose);
+    }
 }
 function renderData(obj, data, sel) {
     if (data) {
@@ -54,8 +67,10 @@ function renderData(obj, data, sel) {
 }
 function openModal(action = null, config = {}) {
     $('.g-recaptcha').remove();
-    if (action === null) {
-        var obj = $('.{$this->modalClass}');
+    var obj = $('.{$this->modalClass}');
+    if (action === obj.attr('data-modal-action')) {
+        obj.modal({show: true});
+    } else if (action === null) {
         modalLoad(obj, config);
         if (typeof config.backdrop !== 'undefined') {
             config.backdrop = {$this->backdrop};
@@ -65,24 +80,23 @@ function openModal(action = null, config = {}) {
         }
         obj.modal({
             show: true,
-            backdrop: config.backdrop,
-            keyboard: config.keyboard
+            backdrop: config.backdrop === 'false' ? false : true,
+            keyboard: config.keyboard === 'false' ? false : true
         });
     } else {
         $.getJSON(action, function(data){
-            var obj = $('.{$this->modalClass}');
-            data = $.extend(data, config);
-            modalLoad(obj, data);
-            if (!data.backdrop) {
-                data.backdrop = {$this->backdrop};
+            config = $.extend(config, data);
+            modalLoad(obj, config);
+            if (!config.backdrop) {
+                config.backdrop = {$this->backdrop};
             }
-            if (!data.keyboard) {
-                data.keyboard = {$this->keyboard};
+            if (!config.keyboard) {
+                config.keyboard = {$this->keyboard};
             }
             obj.modal({
                 show: true,
-                backdrop: data.backdrop,
-                keyboard: data.keyboard
+                backdrop: config.backdrop === 'false' ? false : true,
+                keyboard: config.keyboard === 'false' ? false : true
             });
         });
     }
@@ -94,18 +108,21 @@ JS;
 $(document).on('click', '*[data-modal]', function(e){
     e.preventDefault();
     var config = {
-        size: $(this).attr('data-modal-size'),
+        action: $(this).attr('data-modal'),
+        dialog: $(this).attr('data-modal-dialog'),
         title: $(this).attr('data-modal-title'),
         body: $(this).attr('data-modal-body'),
         footer: $(this).attr('data-modal-footer'),
         class: $(this).attr('data-modal-class'),
         backdrop: $(this).attr('data-modal-backdrop'),
-        keyboard: $(this).attr('data-modal-keyboard')
+        keyboard: $(this).attr('data-modal-keyboard'),
+        autoclose: $(this).attr('data-modal-autoclose'),
+        redirect: $(this).attr('data-modal-redirect')
     };
-    openModal($(this).attr('data-modal'), config);
+    openModal(config.action, config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
-    $('.{$this->modalClass} form').trigger('beforeSubmit');
+    $('.{$this->modalClass}').attr('data-modal-action', null).find('form').trigger('beforeSubmit');
     return false;
 });
 $(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
