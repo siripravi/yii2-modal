@@ -70,7 +70,7 @@ function openModal(action = null, config = {}) {
     var obj = $('.{$this->modalClass}');
     if (action === obj.attr('data-modal-action')) {
         obj.modal({show: true});
-    } else if (action === null) {
+    } else if (action === null || action === '') {
         modalLoad(obj, config);
         if (typeof config.backdrop !== 'undefined') {
             config.backdrop = {$this->backdrop};
@@ -122,10 +122,14 @@ $(document).on('click', '*[data-modal]', function(e){
     openModal(config.action, config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
-    $('.{$this->modalClass}').attr('data-modal-action', null).find('form').trigger('beforeSubmit');
-    return false;
+    if ($(this).closest('form').length) {
+        $('.{$this->modalClass}').attr('data-modal-action', null);
+    } else {
+        $('.{$this->modalClass}').attr('data-modal-action', null).find('form').trigger('beforeSubmit');
+    }
 });
 $(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
+    $('.{$this->modalClass}').attr('data-modal-action', null);
     var form = $(this);
     $.post(form.attr('action'), form.serialize(), function(data){
         modalLoad($('.{$this->modalClass}'), data);
