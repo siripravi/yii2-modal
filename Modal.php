@@ -85,19 +85,21 @@ function openModal(action = null, config = {}) {
         });
     } else {
         $.getJSON(action, function(data){
-            config = $.extend(config, data);
-            modalLoad(obj, config);
-            if (!config.backdrop) {
-                config.backdrop = {$this->backdrop};
+            if (data) {
+                config = $.extend(config, data);
+                modalLoad(obj, config);
+                if (!config.backdrop) {
+                    config.backdrop = {$this->backdrop};
+                }
+                if (!config.keyboard) {
+                    config.keyboard = {$this->keyboard};
+                }
+                obj.modal({
+                    show: true,
+                    backdrop: config.backdrop === 'false' ? false : true,
+                    keyboard: config.keyboard === 'false' ? false : true
+                });
             }
-            if (!config.keyboard) {
-                config.keyboard = {$this->keyboard};
-            }
-            obj.modal({
-                show: true,
-                backdrop: config.backdrop === 'false' ? false : true,
-                keyboard: config.keyboard === 'false' ? false : true
-            });
         });
     }
 }
