@@ -37,7 +37,7 @@ class Modal extends Widget
         /* @var $view View */
         $view = $this->view;
 
-        $js = <<<JS
+/*        $js = <<<JS
 function modalLoad(obj, data) {
     renderData(obj, data.title, '.modal-title');
     renderData(obj, data.body, '.modal-body');
@@ -68,6 +68,7 @@ function renderData(obj, data, sel) {
 function openModal(action = null, config = {}) {
     $('.g-recaptcha').remove();
     var obj = $('.{$this->modalClass}');
+    $(document).trigger('tooltip');
     if (action === obj.attr('data-modal-action')) {
         obj.modal({show: true});
     } else if (action === null || action === '') {
@@ -103,10 +104,6 @@ function openModal(action = null, config = {}) {
         });
     }
 }
-JS;
-        $view->registerJs($js, View::POS_END);
-
-        $js = <<<JS
 $(document).on('click', '*[data-modal]', function(e){
     e.preventDefault();
     var config = {
@@ -124,22 +121,20 @@ $(document).on('click', '*[data-modal]', function(e){
     openModal(config.action, config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
-    if ($(this).closest('form').length) {
-        $('.{$this->modalClass}').attr('data-modal-action', null);
-    } else {
-        $('.{$this->modalClass}').attr('data-modal-action', null).find('form').trigger('beforeSubmit');
+    var modal = $('.{$this->modalClass}');
+    modal.attr('data-modal-action', null);
+    var form = modal.find('form');
+    if ($(this).hasClass('fix')) {
+        // VerifyPhone
+        return form.trigger('beforeSubmit');
     }
-});
-$(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
-    $('.{$this->modalClass}').attr('data-modal-action', null);
-    var form = $(this);
     $.post(form.attr('action'), form.serialize(), function(data){
-        modalLoad($('.{$this->modalClass}'), data);
+        modalLoad(modal, data);
     }, 'json');
     return false;
 });
 JS;
-        $view->registerJs($js);
+        $view->registerJs($js);*/
 
         Html::addCssClass($this->titleOptions, 'modal-title');
 
