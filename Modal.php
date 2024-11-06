@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: siripravi
+ * User: dench
  * Date: 19.12.17
  * Time: 16:00
  */
@@ -9,6 +9,7 @@
 namespace siripravi\modal;
 
 use yii\base\Widget;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -22,7 +23,7 @@ class Modal extends Widget
 
     public $titleOptions;
 
-    public $size;
+    public $size = 'modal-lg';
 
     public $close = true;
 
@@ -34,29 +35,15 @@ class Modal extends Widget
 
     public function run()
     {
-        /* @var $view View */
-        $view = $this->view;
+        $view = $this->getView();
 
-/*        $js = <<<JS
+        $js = <<<JS
 function modalLoad(obj, data) {
     renderData(obj, data.title, '.modal-title');
     renderData(obj, data.body, '.modal-body');
     renderData(obj, data.footer, '.modal-footer');
-    obj.find('.modal-dialog').attr('class', 'modal-dialog').addClass(data.dialog);
-    obj.addClass(data.class).attr('data-modal-action', data.action);
-    if (data.title) {
-        obj.find('.modal-header').show();
-    } else {
-        obj.find('.modal-header').hide();
-    }
-    if (data.autoclose) {
-        setTimeout(function(){
-            $('.{$this->modalClass}').modal('hide');
-            if (data.redirect) {
-                window.location.href = data.redirect;
-            }
-        }, data.autoclose);
-    }
+   // obj.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm').addClass(data.size);
+    obj.addClass(data.class);
 }
 function renderData(obj, data, sel) {
     if (data) {
@@ -67,11 +54,8 @@ function renderData(obj, data, sel) {
 }
 function openModal(action = null, config = {}) {
     $('.g-recaptcha').remove();
-    var obj = $('.{$this->modalClass}');
-    $(document).trigger('tooltip');
-    if (action === obj.attr('data-modal-action')) {
-        obj.modal({show: true});
-    } else if (action === null || action === '') {
+    if (action === null) {
+        var obj = $('.{$this->modalClass}');
         modalLoad(obj, config);
         if (typeof config.backdrop !== 'undefined') {
             config.backdrop = {$this->backdrop};
@@ -81,60 +65,57 @@ function openModal(action = null, config = {}) {
         }
         obj.modal({
             show: true,
-            backdrop: config.backdrop === 'false' ? false : true,
-            keyboard: config.keyboard === 'false' ? false : true
+            backdrop: config.backdrop,
+            keyboard: config.keyboard
         });
     } else {
         $.getJSON(action, function(data){
-            if (data) {
-                config = $.extend(config, data);
-                modalLoad(obj, config);
-                if (!config.backdrop) {
-                    config.backdrop = {$this->backdrop};
-                }
-                if (!config.keyboard) {
-                    config.keyboard = {$this->keyboard};
-                }
-                obj.modal({
-                    show: true,
-                    backdrop: config.backdrop === 'false' ? false : true,
-                    keyboard: config.keyboard === 'false' ? false : true
-                });
+            var obj = $('.{$this->modalClass}');
+            data = $.extend(data, config);
+            modalLoad(obj, data);
+            if (!data.backdrop) {
+                data.backdrop = {$this->backdrop};
             }
+            if (!data.keyboard) {
+                data.keyboard = {$this->keyboard};
+            }
+            obj.modal({
+                show: true,
+                backdrop: data.backdrop,
+                keyboard: data.keyboard
+            });
         });
     }
 }
+JS;
+        $view->registerJs($js, View::POS_END);
+
+        $js = <<<JS
 $(document).on('click', '*[data-modal]', function(e){
-    e.preventDefault();
+    e.preventDefault();  
     var config = {
-        action: $(this).attr('data-modal'),
-        dialog: $(this).attr('data-modal-dialog'),
+        size: $(this).attr('data-modal-size'),
         title: $(this).attr('data-modal-title'),
         body: $(this).attr('data-modal-body'),
         footer: $(this).attr('data-modal-footer'),
         class: $(this).attr('data-modal-class'),
         backdrop: $(this).attr('data-modal-backdrop'),
-        keyboard: $(this).attr('data-modal-keyboard'),
-        autoclose: $(this).attr('data-modal-autoclose'),
-        redirect: $(this).attr('data-modal-redirect')
+        keyboard: $(this).attr('data-modal-keyboard')
     };
-    openModal(config.action, config);
+    openModal($(this).attr('data-modal'), config);
 });
 $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
-    var modal = $('.{$this->modalClass}');
-    modal.attr('data-modal-action', null);
-    var form = modal.find('form');
-    if ($(this).hasClass('fix')) {
-        // VerifyPhone
-        return form.trigger('beforeSubmit');
-    }
+    $('.{$this->modalClass} form').trigger('beforeSubmit');
+});
+$(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
+    var form = $(this);
     $.post(form.attr('action'), form.serialize(), function(data){
-        modalLoad(modal, data);
+        modalLoad($('.{$this->modalClass}'), data);
     }, 'json');
     return false;
 });
 JS;
-        $view->registerJs($js);*/
+        $view->registerJs($js);
 
         Html::addCssClass($this->titleOptions, 'modal-title');
 

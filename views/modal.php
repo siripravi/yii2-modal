@@ -16,19 +16,20 @@
 use yii\helpers\Html;
 
 ?>
-<div class="modal <?= $options['class'] ?> fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog<?= $center ? ' modal-dialog-centered' : '' ?><?= $size ? ' ' . $size : '' ?>" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <?= Html::tag($titleTag, '', $titleOptions) ?>
-                <?php if ($close) : ?>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <?php endif; ?>
-            </div>
-            <div class="modal-body"></div>
-            <div class="modal-footer"></div>
-        </div>
+<!-- Modal -->
+<div id="exampleModal" data-backdrop="static" class="modal <?= $options['class'] ?> fade" tabindex="-1" role="dialog" aria-hidden="true" data-modal-size="modal-lg">
+  <div class="modal-dialog<?= $center ? ' modal-dialog-centered ' : '' ?> modal-lg" role="document" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><?= Html::tag($titleTag, '', $titleOptions) ?></h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+       
+      </div>
     </div>
+  </div>
 </div>
