@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: dench
@@ -38,83 +39,83 @@ class Modal extends Widget
         $view = $this->getView();
 
         $js = <<<JS
-function modalLoad(obj, data) {
-    renderData(obj, data.title, '.modal-title');
-    renderData(obj, data.body, '.modal-body');
-    renderData(obj, data.footer, '.modal-footer');
-   // obj.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm').addClass(data.size);
-    obj.addClass(data.class);
-}
-function renderData(obj, data, sel) {
-    if (data) {
-        obj.find(sel).html(data).show();
-    } else {
-        obj.find(sel).hide();
-    }
-}
-function openModal(action = null, config = {}) {
-    $('.g-recaptcha').remove();
-    if (action === null) {
-        var obj = $('.{$this->modalClass}');
-        modalLoad(obj, config);
-        if (typeof config.backdrop !== 'undefined') {
-            config.backdrop = {$this->backdrop};
+        function modalLoad(obj, data) {
+            renderData(obj, data.title, '.modal-title');
+            renderData(obj, data.body, '.modal-body');
+            renderData(obj, data.footer, '.modal-footer');
+        // obj.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm').addClass(data.size);
+            obj.addClass(data.class);
         }
-        if (typeof config.keyboard !== 'undefined') {
-            config.keyboard = {$this->keyboard};
+        function renderData(obj, data, sel) {
+            if (data) {
+                obj.find(sel).html(data).show();
+            } else {
+                obj.find(sel).hide();
+            }
         }
-        obj.modal({
-            show: true,
-            backdrop: config.backdrop,
-            keyboard: config.keyboard
-        });
-    } else {
-        $.getJSON(action, function(data){
-            var obj = $('.{$this->modalClass}');
-            data = $.extend(data, config);
-            modalLoad(obj, data);
-            if (!data.backdrop) {
-                data.backdrop = {$this->backdrop};
+        function openModal(action = null, config = {}) {
+            $('.g-recaptcha').remove();
+            if (action === null) {
+                var obj = $('.{$this->modalClass}');
+                modalLoad(obj, config);
+                if (typeof config.backdrop !== 'undefined') {
+                    config.backdrop = {$this->backdrop};
+                }
+                if (typeof config.keyboard !== 'undefined') {
+                    config.keyboard = {$this->keyboard};
+                }
+                obj.modal({
+                    show: true,
+                    backdrop: config.backdrop,
+                    keyboard: config.keyboard
+                });
+            } else {
+                $.getJSON(action, function(data){
+                    var obj = $('.{$this->modalClass}');
+                    data = $.extend(data, config);
+                    modalLoad(obj, data);
+                    if (!data.backdrop) {
+                        data.backdrop = {$this->backdrop};
+                    }
+                    if (!data.keyboard) {
+                        data.keyboard = {$this->keyboard};
+                    }
+                    obj.modal({
+                        show: true,
+                        backdrop: data.backdrop,
+                        keyboard: data.keyboard
+                    });
+                });
             }
-            if (!data.keyboard) {
-                data.keyboard = {$this->keyboard};
-            }
-            obj.modal({
-                show: true,
-                backdrop: data.backdrop,
-                keyboard: data.keyboard
-            });
-        });
-    }
-}
-JS;
+        }
+        JS;
         $view->registerJs($js, View::POS_END);
 
         $js = <<<JS
-$(document).on('click', '*[data-modal]', function(e){
-    e.preventDefault();  
-    var config = {
-        size: $(this).attr('data-modal-size'),
-        title: $(this).attr('data-modal-title'),
-        body: $(this).attr('data-modal-body'),
-        footer: $(this).attr('data-modal-footer'),
-        class: $(this).attr('data-modal-class'),
-        backdrop: $(this).attr('data-modal-backdrop'),
-        keyboard: $(this).attr('data-modal-keyboard')
-    };
-    openModal($(this).attr('data-modal'), config);
-});
-$(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
-    $('.{$this->modalClass} form').trigger('beforeSubmit');
-});
-$(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
-    var form = $(this);
-    $.post(form.attr('action'), form.serialize(), function(data){
-        modalLoad($('.{$this->modalClass}'), data);
-    }, 'json');
-    return false;
-});
-JS;
+        $(document).on('click', '*[data-modal]', function(e){
+            e.preventDefault();  
+            var config = {
+                size: $(this).attr('data-modal-size'),
+                title: $(this).attr('data-modal-title'),
+                body: $(this).attr('data-modal-body'),
+                footer: $(this).attr('data-modal-footer'),
+                class: $(this).attr('data-modal-class'),
+                backdrop: $(this).attr('data-modal-backdrop'),
+                keyboard: $(this).attr('data-modal-keyboard')
+            };
+            openModal($(this).attr('data-modal'), config);
+        });
+        $(document).on('click', '.{$this->modalClass} button[type="submit"]', function(){
+            $('.{$this->modalClass} form').trigger('beforeSubmit');
+        });
+        $(document).on('beforeSubmit', '.{$this->modalClass} form', function(){
+            var form = $(this);
+            $.post(form.attr('action'), form.serialize(), function(data){
+                modalLoad($('.{$this->modalClass}'), data);
+            }, 'json');
+            return false;
+        });
+        JS;
         $view->registerJs($js);
 
         Html::addCssClass($this->titleOptions, 'modal-title');
