@@ -93,6 +93,7 @@ class Modal extends Widget
 
         $js = <<<JS
         $(document).on('click', '*[data-modal]', function(e){
+        console.log("clicked");
             e.preventDefault();  
             var config = {
                 size: $(this).attr('data-modal-size'),
