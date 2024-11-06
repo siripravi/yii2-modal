@@ -6,7 +6,7 @@
  * Time: 16:00
  */
 
-namespace dench\modal;
+namespace siripravi\modal;
 
 use yii\base\Widget;
 use yii\helpers\Html;
