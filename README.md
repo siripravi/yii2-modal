@@ -10,13 +10,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist dench/yii2-modal "*"
+php composer.phar require --prefer-dist siripravi/yii2-modal "*"
 ```
 
 or add
 
 ```
-"dench/yii2-modal": "*"
+"siripravi/yii2-modal": "*"
 ```
 
 to the require section of your `composer.json` file.
@@ -34,7 +34,7 @@ Once the extension is installed, simply use it in your code by  :
 
 <button onclick="openModal(null, { title: 'Title', body: 'Body' });">Open Modal</button>
 
-<?= \dench\modal\Modal::widget(); ?>
+<?= \siripravi\modal\Modal::widget(); ?>
 ```
 ```php
 public function actionModalTest()
